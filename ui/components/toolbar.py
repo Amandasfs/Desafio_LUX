@@ -1,6 +1,17 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from openpyxl import load_workbook
+from openpyxl import load_workbook 
+import os
+import sys
+
+def resource_path(relative_path):
+    """Retorna o caminho absoluto para o recurso, seja no dev ou no exe PyInstaller"""
+    try:
+        base_path = sys._MEIPASS  # Diretório temporário do PyInstaller
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 
 def create_toolbar(root, dashboard):
     toolbar = tk.Frame(root, bg="#053c9b", height=50)
@@ -8,6 +19,8 @@ def create_toolbar(root, dashboard):
 
     search_container = tk.Frame(toolbar, bg="#00215b")
     search_container.pack(side="left", padx=10)
+
+
 
     tk.Label(
         search_container,
@@ -147,10 +160,10 @@ def abrir_formulario_contato(dashboard):
     def salvar_contato():
         valores = [entradas[c].get() for c in (campos_cliente + campos_empresa)]
         try:
-            wb = load_workbook("dados_brutos.xlsx")
+            wb = load_workbook(resource_path("dados_brutos.xlsx"))
             ws = wb.active
             ws.append(valores)
-            wb.save("dados_brutos.xlsx")
+            wb.save(resource_path("dados_brutos.xlsx"))
             messagebox.showinfo("✅ Sucesso", "Contato cadastrado com sucesso!")
             form.destroy()
         except Exception as e:
@@ -180,7 +193,7 @@ def abrir_alterar_contato():
     def buscar_contato():
         nome = nome_entry.get().strip().lower()
         try:
-            wb = load_workbook("dados_brutos.xlsx")
+            wb = load_workbook(resource_path("dados_brutos.xlsx"))
             ws = wb.active
             encontrado = False
             for row in ws.iter_rows(min_row=2, values_only=False):
@@ -201,14 +214,14 @@ def abrir_alterar_contato():
         novo_telefone = telefone_entry.get().strip()
         novo_email = email_entry.get().strip()
         try:
-            wb = load_workbook("dados_brutos.xlsx")
+            wb = load_workbook(resource_path("dados_brutos.xlsx"))
             ws = wb.active
             alterado = False
             for row in ws.iter_rows(min_row=2, values_only=False):
                 if row[1].value and row[1].value.strip().lower() == nome:
                     row[4].value = novo_telefone
                     row[5].value = novo_email
-                    wb.save("dados_brutos.xlsx")
+                    wb.save(os.path.join(os.path.dirname(resource_path("dados_brutos.xlsx")), "dados_brutos.xlsx"))
                     messagebox.showinfo("Sucesso", "Contato alterado com sucesso!")
                     form.destroy()
                     alterado = True

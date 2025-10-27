@@ -1,7 +1,18 @@
-# ui/screens/gestores_screen.py
 import tkinter as tk
 from tkinter import ttk
 from services.parser_excel import carregar_dados_excel
+import os
+import sys
+
+
+def get_resource_path(relative_path):
+    """Retorna o caminho absoluto do recurso, compatível com executável PyInstaller."""
+    try:
+        base_path = sys._MEIPASS  # Diretório temporário usado pelo PyInstaller
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 
 class GestoresScreen:
     def __init__(self, parent):
@@ -18,9 +29,23 @@ class GestoresScreen:
             fg="#00215b"
         ).pack(anchor="w", pady=(0, 10))
 
-        # Carrega dados do backend
-        _, empresas, gestores = carregar_dados_excel("./dados_brutos.xlsx")
-        self.gestores = gestores
+        # === Caminho dinâmico para o Excel ===
+        excel_path = get_resource_path("dados_brutos.xlsx")
+
+        # === Carrega dados ===
+        try:
+            _, empresas, gestores = carregar_dados_excel(excel_path)
+            self.gestores = gestores
+        except Exception as e:
+            self.gestores = []
+            tk.Label(
+                self.frame,
+                text=f"Erro ao carregar dados: {e}",
+                fg="red",
+                bg="#f0f0f0",
+                font=("Arial", 10, "bold")
+            ).pack(anchor="w", pady=(5, 10))
+            return
 
         # === Choice box com nomes dos gestores ===
         tk.Label(self.frame, text="Selecione um Gestor:", bg="#f0f0f0").pack(anchor="w")

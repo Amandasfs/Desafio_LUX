@@ -1,6 +1,17 @@
 import tkinter as tk
 from tkinter import messagebox
 from openpyxl import load_workbook
+import os
+import sys
+
+def get_resource_path(relative_path):
+    """Retorna o caminho absoluto, mesmo dentro do .exe"""
+    try:
+        base_path = sys._MEIPASS  # caminho temporário quando empacotado pelo PyInstaller
+    except Exception:
+        base_path = os.path.abspath(".")  # caminho normal (modo desenvolvimento)
+    return os.path.join(base_path, relative_path)
+
 
 # COMPONENTS
 from ui.components.header import create_header as Header
@@ -69,7 +80,8 @@ class DashboardWindow:
         termo = getattr(self, "get_search_term", lambda: "")().lower().strip()
         print(f"Buscando por: {termo}")
         try:
-            wb = load_workbook("dados_brutos.xlsx")
+            excel_path = get_resource_path("dados_brutos.xlsx")
+            wb = load_workbook(excel_path)
             ws = wb.active
             resultados = []
             for row in ws.iter_rows(min_row=2, values_only=True):
@@ -82,7 +94,8 @@ class DashboardWindow:
     def organizar_dados_excel(self):
         def executar_organizacao(tipo):
             try:
-                wb = load_workbook("dados_brutos.xlsx")
+                excel_path = get_resource_path("dados_brutos.xlsx")
+                wb = load_workbook(excel_path)
                 ws = wb.active
                 dados = list(ws.iter_rows(min_row=2, values_only=True))
 
@@ -102,7 +115,8 @@ class DashboardWindow:
                     for j, valor in enumerate(row, start=1):
                         ws.cell(row=i, column=j, value=valor)
 
-                wb.save("dados_brutos.xlsx")
+                wb.save(get_resource_path("dados_brutos.xlsx"))
+
 
                 messagebox.showinfo("Sucesso", f"Dados organizados por {tipo} com sucesso!")
                 self.show_resultados(dados)

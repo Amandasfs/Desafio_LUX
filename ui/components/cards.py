@@ -1,14 +1,24 @@
-# ui/dashboard/components/cards.py
 import tkinter as tk
 import os
 import time
 from threading import Thread
 from services.parser_excel import carregar_dados_excel
+import sys
+
+def resource_path(relative_path):
+    """Retorna o caminho absoluto para o recurso, seja no dev ou no exe PyInstaller"""
+    try:
+        base_path = sys._MEIPASS  # Diretório temporário do PyInstaller
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 
 class CardsSection:
-    def __init__(self, parent, excel_path="./dados_brutos.xlsx"):
+    def __init__(self, parent, excel_path="dados_brutos.xlsx"):
         self.parent = parent
-        self.excel_path = excel_path
+        # Caminho do Excel (absoluto, funciona no executável e no dev)
+        self.excel_path = resource_path(excel_path)
         self.last_modified = None
 
         # Frame principal

@@ -2,6 +2,16 @@
 import tkinter as tk
 from tkinter import ttk
 from services.parser_excel import carregar_dados_excel
+import os
+import sys
+
+def resource_path(relative_path):
+    """Retorna o caminho absoluto para o recurso, seja no dev ou no exe PyInstaller"""
+    try:
+        base_path = sys._MEIPASS  # Diretório temporário do PyInstaller
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class EmpresasScreen:
     def __init__(self, parent):
@@ -41,7 +51,9 @@ class EmpresasScreen:
 
     def carregar_dados(self):
         try:
-            _, empresas, gestores = carregar_dados_excel("./dados_brutos.xlsx")
+            # Caminho absoluto do Excel (funciona no exe também)
+            excel_path = resource_path("dados_brutos.xlsx")
+            _, empresas, gestores = carregar_dados_excel(excel_path)
 
             for empresa in empresas:
                 gestor_nome = ""

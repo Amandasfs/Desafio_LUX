@@ -3,12 +3,23 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from services.parser_excel import carregar_dados_excel
+import os
+import sys
+
+def resource_path(relative_path):
+    """Retorna o caminho absoluto para o recurso, seja no dev ou no exe PyInstaller"""
+    try:
+        base_path = sys._MEIPASS  # Diretório temporário criado pelo PyInstaller
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 
 class GraficosScreen:
     def __init__(self, parent):
         self.parent = parent
 
-        # === Frame container com scroll vertical/ horizontal ===
+        # === Frame container com scroll vertical/horizontal ===
         self.frame = tk.Frame(parent, bg="#f9f9f9")
         self.frame.pack(fill="both", expand=True)
 
@@ -24,7 +35,7 @@ class GraficosScreen:
         self.canvas_frame.bind('<Configure>', lambda e: self.canvas_frame.configure(scrollregion=self.canvas_frame.bbox("all")))
 
         self.inner_frame = tk.Frame(self.canvas_frame, bg="#f9f9f9")
-        self.canvas_frame.create_window((0,0), window=self.inner_frame, anchor="nw")
+        self.canvas_frame.create_window((0, 0), window=self.inner_frame, anchor="nw")
 
         # === Título ===
         tk.Label(
@@ -35,8 +46,11 @@ class GraficosScreen:
             fg="#00215b"
         ).pack(anchor="w", pady=(0, 10))
 
+        # === Caminho do Excel (compatível com .exe) ===
+        excel_path = resource_path("dados_brutos.xlsx")
+
         # === Carrega dados ===
-        self.clientes, self.empresas, self.gestores = carregar_dados_excel("./dados_brutos.xlsx")
+        self.clientes, self.empresas, self.gestores = carregar_dados_excel(excel_path)
 
         # === ChoiceBox para seleção de gráfico ===
         tk.Label(self.inner_frame, text="Escolha o tipo de gráfico:", bg="#f9f9f9", font=("Arial", 11)).pack(anchor="w")
