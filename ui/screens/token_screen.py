@@ -1,11 +1,12 @@
+# ui/screens/token_screen.py
 import tkinter as tk
 from tkinter import ttk, messagebox
-from ui.dashboard.dashboard_window import DashboardWindow
+from .dashboard_window import DashboardWindow
 
-class LoginWindow:
+class TokenScreen:
     def __init__(self, root):
         self.root = root
-        self.root.title("Login - Gerenciamento de Contatos")
+        self.root.title("Acesso - Gerenciamento de Contatos")
         self.root.geometry("350x250")
         self.root.resizable(False, False)
         

@@ -1,8 +1,8 @@
 # main.py
-from ui.login_window import LoginWindow
+from ui.screens.token_screen import TokenScreen
 import tkinter as tk
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = LoginWindow(root)
+    app = TokenScreen(root)
     root.mainloop()
